@@ -1,7 +1,11 @@
-[![build status](https://secure.travis-ci.org/pvela/nexmo.png)](http://travis-ci.org/pvela/nexmo)
-A nodejs wrapper for nexmo (http://nexmo.com/) API to send SMS
+Nexmo Client Library for Node.js [![build status](https://secure.travis-ci.org/Nexmo/nexmo-node.png)](http://travis-ci.org/Nexmo/nexmo-node)
+===================================
+
+A Node.JS REST API Wrapper library for Nexmo (http://nexmo.com/)
 
 For full API documentation refer to https://docs.nexmo.com/
+
+[![NPM](https://nodei.co/npm/easynexmo.png)](https://nodei.co/npm/easynexmo/)
 
 Installation Instructions :
 ===========================
@@ -35,6 +39,7 @@ List of API's supported by the library.
 ###Send a text message
 
 	nexmo.sendTextMessage(sender,recipient,message,opts,callback)
+opts parameter is optional
 
 ###Send a Binary Message
 
@@ -131,7 +136,7 @@ For more information check the documentation at https://docs.nexmo.com/index.php
 
 ###Verification Control API
 
-	nexmo.controlVerifyRequest(request_id:<UNIQUE_ID_FROM_VERIFICATION_REQUEST>,cmd:<CODE_TO_CHECK>,callback);
+	nexmo.controlVerifyRequest({request_id:<UNIQUE_ID_FROM_VERIFICATION_REQUEST>,cmd:<CODE_TO_CHECK>},callback);
 For more information check the documentation at https://docs.nexmo.com/index.php/verify/control
 
 ###Number Insight
@@ -176,6 +181,14 @@ KEY=<your key> SECRET=<your secret> FROM_NUMBER=<from number> TO_NUMBER=<to numb
 ```
 
 Please remember to substitute the values!
+
+For testing purposes you can also use setHost function to make the library send requests to another place like localhost instead of real Nexmo. Feel free to catch and process those requests the way you need. A usage example:
+
+	nexmo.setHost('localhost');
+
+Note that default port is 443 and easynexmo does https calls in such a case. You can use setPort function to make it proper for your testing environment. When port is not 443 it will make requests via http protocol. Have a look at an example:
+
+	nexmo.setPort('8080');
 
 The MIT License (MIT)
 =====================
