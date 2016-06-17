@@ -1,66 +1,94 @@
-Nexmo Client Library for Node.js [![build status](https://secure.travis-ci.org/Nexmo/nexmo-node.png)](http://travis-ci.org/Nexmo/nexmo-node)
+Nexmo Client Library for Node.js
 ===================================
+[![build status](https://secure.travis-ci.org/Nexmo/nexmo-node.png)](http://travis-ci.org/Nexmo/nexmo-node)
+[![NPM](https://nodei.co/npm/nexmo.png)](https://nodei.co/npm/nexmo/)
 
-A Node.JS REST API Wrapper library for Nexmo (http://nexmo.com/)
+You can use this Node.js client library to add [Nexmo's API](#api-coverage) to your application. To use this, you'll
+need a Nexmo account. Sign up [for free at nexmo.com][signup]. 
 
-For full API documentation refer to https://docs.nexmo.com/
+ * [Installation](#installation)
+ * [Configuration](#configuration)
+ * [Usage](#usage)
+ * [Examples](#examples)
+ * [Coverage](#api-coverage)
+ * [Contributing](#contributing) 
 
-[![NPM](https://nodei.co/npm/easynexmo.png)](https://nodei.co/npm/easynexmo/)
 
-Installation Instructions :
-===========================
+Installation
+------------
 
-Download and Install lib/nexmo.js in your lib
+To use the client library you'll need to have [created a Nexmo account][signup]. 
 
-or use
+To install the this Node.js library using npm:
 
-```
-npm install easynexmo
-```
+	npm install easynexmo
 
-Usage :
-=======
+Alternatively you can clone this project and include lib/nexmo.js to your application.
 
-```js
-var nexmo = require('easynexmo');
 
-nexmo.initialize(KEY, SECRET, DEBUG);
-```
+Usage
+-----
+To use Nexmo's Node Client Library in your application, create a instance of the client library using your Nexmo API credentials, and an optional debug flag to log the API calls.
 
-KEY - API Key from Nexmo
+	var nexmo = require('easynexmo');
+	nexmo.initialize(KEY, SECRET, DEBUG);
 
-SECRET - API SECRET from Nexmo
+### Callbacks
+For all API calls, if a callback is provided as the final argument, it will be called with two arguments, any error encountered and the parsed API response.
 
-DEBUG - set this to true to debug library calls
+An example callback function :
 
-List of API's supported by the library.
-=======================================
+	function consolelog (err,messageResponse) {
+           if (err) {
+                console.log(err);
+           } else {
+                console.dir(messageResponse);
+           }
+	}
 
-###Send a text message
+Refer here https://docs.nexmo.com/ to get the schema for the returned message response object.
 
-	nexmo.sendTextMessage(sender,recipient,message,opts,callback)
-opts parameter is optional
+Examples
+--------
+The following examples show how to:
+ * [Send an SMS](#send-an-sms)
+ * [Check Account Balance](#check-account-balance)
+ * [Send a WAP Push Message](#send-a-wap-push-message)
 
-###Send a Binary Message
+### Send an SMS
 
-	nexmo.sendBinaryMessage(fromnumber, tonumber,body, udh, callback);
+Use [Nexmo's SMS API][doc_sms] to send an SMS text message. You must provide a `from`, the number the message is sent `to` (in international form), and the text `message` to send.
 
-body - Hex encoded binary data
+Any optional API parameters can be provided as the `opts` dictionary object.
 
-udh - Hex encoded udh
+	nexmo.sendTextMessage(from, to, message, {
+        'client-ref': 'abcd1234'
+	}, function(err, apiResponse){
+        if(!err){
+            console.log('sent message with id: ' + apiResponse.message-id);
+        }
+    });
 
-###Send a WAP Push Message
+You can also send a binary message, this time passing hex encoded `body` and `udh`. For more information on sending binary message, take a look at the [Nexmo API documentation][docs_binary]
 
-	nexmo.sendWapPushMessage(fromnumber,tonumber,title,url,validity,callback);
+	nexmo.sendBinaryMessage(from, to, body, udh, callback);
 
-validity is optional (if given should be in milliseconds)
+Sending a WAP push uses a similar signature, expecting a `title`, `url`, and an optional `validity` in milliseconds. For more information on sending binary message, take a look at the [Nexmo API documentation][docs_wap]
 
-###Send a Short Code alert
+	nexmo.sendWapPushMessage(from, to, title, url, validity, callback);
 
-	nexmo.shortcodeAlert(recipient, messageParams, opts, callback);
+For US customers, Nexmo provides a shared shortcode for Alerts. You need to contact Nexmo support to have this enabled on your account.
+
+Once enabled, you can send a short code alert `to` a user by providing the each of your `templateVarables` as a dictionary object.
+
+	nexmo.shortcodeAlert(to, templateVarables, opts, callback);
 
 ###Check Account Balance
-	nexmo.checkBalance(callback);
+Check your nexmo account balance by providing a callback to `checkBalance`:
+
+	nexmo.checkBalance(function(err, apiResponse){
+	    console.log('Nexmo Balance is: ' + apiResponse.value);
+	});
 
 ###Get Pricing for sending message to a country.
 
@@ -200,23 +228,6 @@ Example : Example : nexmo.numberInsightStandard('1-234-567-8900',consolelog);
 	nexmo.numberInsight({number:'<NUMBER_TO_GET_INSIGHT>',callback:<URL_TO_SUBMIT_THE_RESPONSE>},callback);
 For more information check the documentation at https://docs.nexmo.com/number-insight/advanced
 
-Callback
-========
-
-Callback from all API calls returns 2 parameters - error and a json object.
-
-An example callback function :
-
-	function consolelog (err,messageResponse) {
-           if (err) {
-                console.log(err);
-           } else {
-                console.dir(messageResponse);
-           }
-	}
-
-Refer here https://docs.nexmo.com/ to get the schema for the returned message response object.
-
 Testing
 =======
 
@@ -246,13 +257,70 @@ Note that default port is 443 and easynexmo does https calls in such a case. You
 
 	nexmo.setPort('8080');
 
-The MIT License (MIT)
-=====================
+API Coverage
+------------
 
-Copyright (c) 2015 Prabhu Velayutham
+* Account
+    * [X] Balance
+    * [X] Pricing
+    * [ ] Settings
+    * [ ] Top Up
+    * [X] Numbers
+        * [X] Search
+        * [X] Buy
+        * [X] Cancel
+        * [X] Update
+* Number Insight
+    * [X] Basic
+    * [X] Standard
+    * [X] Advanced
+    * [X] Webhook Notification
+* Verify
+    * [X] Verify
+    * [X] Check
+    * [X] Search
+    * [X] Control
+* Search
+    * [X] Message
+    * [X] Messages
+    * [X] Rejections
+* Messaging 
+    * [X] Send
+    * [X] Delivery Receipt
+    * [ ] Inbound Messages
+    * [ ] Search
+        * [ ] Message
+        * [ ] Messages
+        * [ ] Rejections
+    * US Short Codes
+        * [X] Two-Factor Authentication
+        * [X] Event Based Alerts
+            * [X] Sending Alerts
+            * [X] Campaign Subscription Management
+* Voice
+    * [X] Outbound Calls
+    * [X] Inbound Call
+    * [X] Text-To-Speech Call
+    * [X] Text-To-Speech Prompt
 
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+Contributing
+------------
 
-The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+    "nexmo",
+    "pvela",
+    "leggetter",
+    "akuzi",
+    "bpilot",
+    "justinfreitag",
+    "ecwyne",
+    "https://github.com/backhand"
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+License
+-------
+
+This library is released under the [MIT License][license]
+
+[create_account]: https://docs.nexmo.com/tools/dashboard#setting-up-your-nexmo-account?utm_source=DEV_REL&utm_medium=github&utm_campaign=node-client-library
+[signup]: https://dashboard.nexmo.com/sign-up?utm_source=DEV_REL&utm_medium=github&utm_campaign=node-client-library
+[doc_sms]: https://docs.nexmo.com/api-ref/sms-api?utm_source=DEV_REL&utm_medium=github&utm_campaign=node-client-library
+[license]: LICENSE.txt
