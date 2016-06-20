@@ -23,9 +23,6 @@ To install the this Node.js library using npm:
 
 	npm install easynexmo
 
-Alternatively you can clone this project and include lib/nexmo.js to your application.
-
-
 Usage
 -----
 To use Nexmo's Node Client Library in your application, create a instance of the client library using your Nexmo API credentials, and an optional debug flag to log the API calls.
